@@ -12,20 +12,15 @@ class Game
     const SCIENCE = "Science";
 
     private $players;
-    private $inPenaltyBox ;
 
     private $popQuestions;
     private $scienceQuestions;
     private $sportsQuestions;
     private $rockQuestions;
 
-    private $currentPlayer = 0;
-    private $isGettingOutOfPenaltyBox;
-
     public function __construct()
     {
         $this->players = new Players();
-        $this->inPenaltyBox  = array(0);
 
         $this->popQuestions = new Questions();
         $this->scienceQuestions = new Questions();
@@ -49,7 +44,7 @@ class Game
     {
         $player = new Player($playerName);
         $this->players->append($player);
-        $this->inPenaltyBox[$this->players->count()] = false;
+        $player->setPenaltyBox(false);
 
         echoln($player . " was added");
         echoln("They are player number " . $this->players->count());
@@ -57,13 +52,14 @@ class Game
 	}
 
 	public function  roll($roll) {
-		echoln($this->players->get($this->currentPlayer) . " is the current player");
+        $player = $this->players->get();
+
+		echoln($player . " is the current player");
 		echoln("They have rolled a " . $roll);
 
-        $player = $this->players->get($this->currentPlayer);
-		if ($this->inPenaltyBox[$this->currentPlayer]) {
+		if ($player->isInPenaltyBox()) {
 			if ($roll % 2 != 0) {
-				$this->isGettingOutOfPenaltyBox = true;
+                $player->setGettingOutPenaltyBox(true);
 
 				echoln($player . " is getting out of the penalty box");
                 $player->getPlace()->moveBy($roll);
@@ -77,7 +73,7 @@ class Game
 				$this->askQuestion();
 			} else {
 				echoln($player . " is not getting out of the penalty box");
-				$this->isGettingOutOfPenaltyBox = false;
+                $player->setGettingOutPenaltyBox(false);
             }
 
 		} else {
@@ -114,7 +110,7 @@ class Game
     public function currentCategory()
     {
         $category = self::ROCK;
-        $player = $this->players->get($this->currentPlayer);
+        $player = $this->players->get();
         switch ($player->getPlace()->get()) {
             case 0:
             case 4:
@@ -138,39 +134,29 @@ class Game
 
     public function wasCorrectlyAnswered()
     {
-        $player = $this->players->get($this->currentPlayer);
-		if ($this->inPenaltyBox[$this->currentPlayer]) {
-			if ($this->isGettingOutOfPenaltyBox) {
+        $player = $this->players->get();
+		if ($player->isInPenaltyBox()) {
+			if ($player->isGettingOutOfPenaltyBox()) {
 				echoln("Answer was correct!!!!");
                 $player->addPurses(1);
-				echoln($this->players->get($this->currentPlayer) . " now has " . $player->getPurses() . " Gold Coins.");
+				echoln($player . " now has " . $player->getPurses() . " Gold Coins.");
 
 				$winner = $player->didWin();
-				$this->currentPlayer++;
-
-                if ($this->currentPlayer == $this->players->count()) {
-                    $this->currentPlayer = 0;
-                }
+                $this->players->next();
 
 				return $winner;
 			} else {
-				$this->currentPlayer++;
-                if ($this->currentPlayer == $this->players->count()) {
-                    $this->currentPlayer = 0;
-                }
+                $this->players->next();
 				return true;
 			}
 		} else {
 			echoln("Answer was corrent!!!!");
             $player->addPurses(1);
 
-			echoln($this->players->get($this->currentPlayer) . " now has " . $player->getPurses() . " Gold Coins.");
+			echoln($player . " now has " . $player->getPurses() . " Gold Coins.");
 
 			$winner = $player->didWin();
-			$this->currentPlayer++;
-            if ($this->currentPlayer == $this->players->count()) {
-                $this->currentPlayer = 0;
-            }
+            $this->players->next();
 
 			return $winner;
 		}
@@ -178,14 +164,12 @@ class Game
 
     public function wrongAnswer()
     {
+        $player = $this->players->get();
 		echoln("Question was incorrectly answered");
-		echoln($this->players->get($this->currentPlayer) . " was sent to the penalty box");
-        $this->inPenaltyBox[$this->currentPlayer] = true;
+		echoln($player . " was sent to the penalty box");
+        $player->setPenaltyBox(true);
 
-		$this->currentPlayer++;
-        if ($this->currentPlayer == $this->players->count()) {
-            $this->currentPlayer = 0;
-        }
+        $this->players->next();
 		return true;
 	}
 }
