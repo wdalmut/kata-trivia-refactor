@@ -58,7 +58,7 @@ class Game
 				echoln($player . "'s new location is " . $player->getPlace());
 				echoln("The category is " . $player->getCurrentCategory());
 
-				$this->askQuestion();
+                $this->questions->askFor($player);
 			} else {
 				echoln($player . " is not getting out of the penalty box");
                 $player->setGettingOutPenaltyBox(false);
@@ -73,27 +73,9 @@ class Game
 
 			echoln($player . "'s new location is " .$player->getPlace());
 			echoln("The category is " . $player->getCurrentCategory());
-			$this->askQuestion();
-		}
-	}
 
-    public function askQuestion()
-    {
-        $player = $this->players->get();
-        switch ($player->getCurrentCategory()) {
-            case Questions::POP:
-                echoln($this->questions->next(Questions::POP));
-                break;
-            case Questions::SCIENCE:
-                echoln($this->questions->next(Questions::SCIENCE));
-                break;
-            case Questions::SPORTS:
-                echoln($this->questions->next(Questions::SPORTS));
-                break;
-            case Questions::ROCK:
-                echoln($this->questions->next(Questions::ROCK));
-                break;
-        }
+            $this->questions->askFor($player);
+		}
 	}
 
     public function wasCorrectlyAnswered()

@@ -31,6 +31,25 @@ class Questions extends ArrayObject
         $this->$collection->append($question);
     }
 
+    public function askFor(Player $player)
+    {
+        switch ($player->getCurrentCategory()) {
+            case Questions::POP:
+                echoln($this->next(Questions::POP));
+                break;
+            case Questions::SCIENCE:
+                echoln($this->next(Questions::SCIENCE));
+                break;
+            case Questions::SPORTS:
+                echoln($this->next(Questions::SPORTS));
+                break;
+            case Questions::ROCK:
+                echoln($this->next(Questions::ROCK));
+                break;
+        }
+
+    }
+
     public function next($type)
     {
         $type = lcfirst($type);
