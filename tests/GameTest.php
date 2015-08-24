@@ -14,9 +14,7 @@ class GameTest extends \PHPUnit_Framework_TestCase
         $output = ob_get_contents();
         ob_end_clean();
 
-        file_put_contents(__DIR__ . "/_results/{$seed}.txt", $output);
-
-        //$this->assertEquals(file_get_contents(__DIR__ . "/_results/{$seed}.txt"), $output);
+        $this->assertEquals(file_get_contents(__DIR__ . "/_results/{$seed}.txt"), $output);
     }
 
     public function getSeeds()
