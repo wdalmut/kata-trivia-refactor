@@ -12,7 +12,6 @@ class Game
     const SCIENCE = "Science";
 
     private $players;
-    private $purses ;
     private $inPenaltyBox ;
 
     private $popQuestions;
@@ -26,7 +25,6 @@ class Game
     public function __construct()
     {
         $this->players = new Players();
-        $this->purses  = array(0);
         $this->inPenaltyBox  = array(0);
 
         $this->popQuestions = new Questions();
@@ -51,7 +49,6 @@ class Game
     {
         $player = new Player($playerName);
         $this->players->append($player);
-        $this->purses[$this->players->count()] = 0;
         $this->inPenaltyBox[$this->players->count()] = false;
 
         echoln($player . " was added");
@@ -141,13 +138,14 @@ class Game
 
     public function wasCorrectlyAnswered()
     {
+        $player = $this->players->get($this->currentPlayer);
 		if ($this->inPenaltyBox[$this->currentPlayer]) {
 			if ($this->isGettingOutOfPenaltyBox) {
 				echoln("Answer was correct!!!!");
-                $this->purses[$this->currentPlayer]++;
-				echoln($this->players->get($this->currentPlayer) . " now has " .$this->purses[$this->currentPlayer] . " Gold Coins.");
+                $player->addPurses(1);
+				echoln($this->players->get($this->currentPlayer) . " now has " . $player->getPurses() . " Gold Coins.");
 
-				$winner = $this->didPlayerWin();
+				$winner = $player->didWin();
 				$this->currentPlayer++;
 
                 if ($this->currentPlayer == $this->players->count()) {
@@ -164,11 +162,11 @@ class Game
 			}
 		} else {
 			echoln("Answer was corrent!!!!");
-            $this->purses[$this->currentPlayer]++;
+            $player->addPurses(1);
 
-			echoln($this->players->get($this->currentPlayer) . " now has " .$this->purses[$this->currentPlayer] . " Gold Coins.");
+			echoln($this->players->get($this->currentPlayer) . " now has " . $player->getPurses() . " Gold Coins.");
 
-			$winner = $this->didPlayerWin();
+			$winner = $player->didWin();
 			$this->currentPlayer++;
             if ($this->currentPlayer == $this->players->count()) {
                 $this->currentPlayer = 0;
@@ -189,11 +187,5 @@ class Game
             $this->currentPlayer = 0;
         }
 		return true;
-	}
-
-
-    public function didPlayerWin()
-    {
-		return !($this->purses[$this->currentPlayer] == 6);
 	}
 }
