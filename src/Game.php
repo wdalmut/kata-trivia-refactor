@@ -6,32 +6,20 @@ function echoln($string) {
 
 class Game
 {
-    const POP     = "Pop";
-    const ROCK    = "Rock";
-    const SPORTS  = "Sports";
-    const SCIENCE = "Science";
-
     private $players;
-
-    private $popQuestions;
-    private $scienceQuestions;
-    private $sportsQuestions;
-    private $rockQuestions;
+    private $questions;
 
     public function __construct()
     {
         $this->players = new Players();
 
-        $this->popQuestions = new Questions();
-        $this->scienceQuestions = new Questions();
-        $this->sportsQuestions = new Questions();
-        $this->rockQuestions = new Questions();
+        $this->questions = new Questions();
 
         for ($i = 0; $i < 50; $i++) {
-            $this->popQuestions->append("Pop Question " . $i);
-            $this->scienceQuestions->append("Science Question " . $i);
-            $this->sportsQuestions->append("Sports Question " . $i);
-            $this->rockQuestions->append("Rock Question " . $i);
+            $this->questions->addQuestion(Questions::POP, "Pop Question " . $i);
+            $this->questions->addQuestion(Questions::SCIENCE, "Science Question " . $i);
+            $this->questions->addQuestion(Questions::SPORTS, "Sports Question " . $i);
+            $this->questions->addQuestion(Questions::ROCK, "Rock Question " . $i);
     	}
     }
 
@@ -68,7 +56,7 @@ class Game
                 }
 
 				echoln($player . "'s new location is " . $player->getPlace());
-				echoln("The category is " . $this->currentCategory());
+				echoln("The category is " . $player->getCurrentCategory());
 
 				$this->askQuestion();
 			} else {
@@ -84,52 +72,28 @@ class Game
             }
 
 			echoln($player . "'s new location is " .$player->getPlace());
-			echoln("The category is " . $this->currentCategory());
+			echoln("The category is " . $player->getCurrentCategory());
 			$this->askQuestion();
 		}
 	}
 
     public function askQuestion()
     {
-        switch ($this->currentCategory()) {
-            case self::POP:
-                echoln($this->popQuestions->next());
-                break;
-            case self::SCIENCE:
-                echoln($this->scienceQuestions->next());
-                break;
-            case self::SPORTS:
-                echoln($this->sportsQuestions->next());
-                break;
-            case self::ROCK:
-                echoln($this->rockQuestions->next());
-                break;
-        }
-	}
-
-    public function currentCategory()
-    {
-        $category = self::ROCK;
         $player = $this->players->get();
-        switch ($player->getPlace()->get()) {
-            case 0:
-            case 4:
-            case 8:
-                $category = self::POP;
+        switch ($player->getCurrentCategory()) {
+            case Questions::POP:
+                echoln($this->questions->next(Questions::POP));
                 break;
-            case 1:
-            case 5:
-            case 9:
-                $category = self::SCIENCE;
+            case Questions::SCIENCE:
+                echoln($this->questions->next(Questions::SCIENCE));
                 break;
-            case 2:
-            case 6:
-            case 10:
-                $category = self::SPORTS;
+            case Questions::SPORTS:
+                echoln($this->questions->next(Questions::SPORTS));
+                break;
+            case Questions::ROCK:
+                echoln($this->questions->next(Questions::ROCK));
                 break;
         }
-
-        return $category;
 	}
 
     public function wasCorrectlyAnswered()

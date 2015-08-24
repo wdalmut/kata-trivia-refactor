@@ -59,5 +59,29 @@ class Player
     {
 		return !($this->getPurses() == 6);
     }
+
+    public function getCurrentCategory()
+    {
+        $category = Questions::ROCK;
+        switch ($this->getPlace()->get()) {
+            case 0:
+            case 4:
+            case 8:
+                $category = Questions::POP;
+                break;
+            case 1:
+            case 5:
+            case 9:
+                $category = Questions::SCIENCE;
+                break;
+            case 2:
+            case 6:
+            case 10:
+                $category = Questions::SPORTS;
+                break;
+        }
+
+        return $category;
+    }
 }
 
