@@ -46,14 +46,11 @@ class Game
 		echoln("They have rolled a " . $roll);
 
 		if ($player->isInPenaltyBox()) {
-			if ($roll % 2 != 0) {
+			if ($this->rollIsOdd($roll)) {
                 $player->setGettingOutPenaltyBox(true);
 
 				echoln($player . " is getting out of the penalty box");
                 $player->getPlace()->moveBy($roll);
-                if ($player->getPlace()->get() > 11) {
-                    $player->getPlace()->moveBy(-12);
-                }
 
 				echoln($player . "'s new location is " . $player->getPlace());
 				echoln("The category is " . $player->getCurrentCategory());
@@ -63,13 +60,8 @@ class Game
 				echoln($player . " is not getting out of the penalty box");
                 $player->setGettingOutPenaltyBox(false);
             }
-
 		} else {
-
             $player->getPlace()->moveBy($roll);
-            if ($player->getPlace()->get() > 11) {
-                $player->getPlace()->moveBy(-12);
-            }
 
 			echoln($player . "'s new location is " .$player->getPlace());
 			echoln("The category is " . $player->getCurrentCategory());
@@ -78,34 +70,28 @@ class Game
 		}
 	}
 
+    private function rollIsOdd($roll)
+    {
+        return ($roll % 2 != 0);
+    }
+
     public function wasCorrectlyAnswered()
     {
         $player = $this->players->get();
-		if ($player->isInPenaltyBox()) {
-			if ($player->isGettingOutOfPenaltyBox()) {
-				echoln("Answer was correct!!!!");
-                $player->addPurses(1);
-				echoln($player . " now has " . $player->getPurses() . " Gold Coins.");
 
-				$winner = $player->didWin();
-                $this->players->next();
-
-				return $winner;
-			} else {
-                $this->players->next();
-				return true;
-			}
-		} else {
-			echoln("Answer was corrent!!!!");
-            $player->addPurses(1);
-
-			echoln($player . " now has " . $player->getPurses() . " Gold Coins.");
-
-			$winner = $player->didWin();
+        if ($player->isInPenaltyBox() && !$player->isGettingOutOfPenaltyBox()) {
             $this->players->next();
+            return true;
+        }
 
-			return $winner;
-		}
+        echoln("Answer was correct!!!!");
+        $player->addPurses(1);
+        echoln($player . " now has " . $player->getPurses() . " Gold Coins.");
+
+        $winner = $player->didWin();
+        $this->players->next();
+
+        return $winner;
 	}
 
     public function wrongAnswer()

@@ -1,7 +1,7 @@
 <?php
 class GameTest extends \PHPUnit_Framework_TestCase
 {
-    private $goldenLimit = 1000;
+    private $goldenLimit = 20000;
 
     /**
      * @dataProvider getSeeds
@@ -10,11 +10,13 @@ class GameTest extends \PHPUnit_Framework_TestCase
     {
         ob_start();
         srand($seed);
-        include_once(__DIR__ . '/../src/GameRunner.php');
+        require(__DIR__ . '/../src/GameRunner.php');
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals(file_get_contents(__DIR__ . "/_results/{$seed}.txt"), $output);
+        file_put_contents(__DIR__ . "/_results/{$seed}.txt", $output);
+
+        //$this->assertEquals(file_get_contents(__DIR__ . "/_results/{$seed}.txt"), $output);
     }
 
     public function getSeeds()

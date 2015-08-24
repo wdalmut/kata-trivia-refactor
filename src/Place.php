@@ -11,6 +11,10 @@ class Place
     public function moveBy($steps)
     {
         $this->position += $steps;
+
+        if ($this->position > 11) {
+            $this->moveBy(-12);
+        }
     }
 
     public function get()
