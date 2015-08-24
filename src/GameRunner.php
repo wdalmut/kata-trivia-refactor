@@ -10,14 +10,14 @@ $aGame->add("Chet");
 $aGame->add("Pat");
 $aGame->add("Sue");
 
-$notAWinner = false;
+$winner = false;
 do {
     $aGame->roll(rand(0,5) + 1);
 
     if (rand(0,9) == 7) {
-        $notAWinner = $aGame->wrongAnswer();
+        $winner = $aGame->wrongAnswer();
     } else {
-        $notAWinner = $aGame->wasCorrectlyAnswered();
+        $winner = $aGame->wasCorrectlyAnswered();
     }
-} while ($notAWinner);
+} while (!$winner);
 

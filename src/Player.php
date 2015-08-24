@@ -57,7 +57,7 @@ class Player
 
     public function didWin()
     {
-		return !($this->getPurses() == 6);
+		return ($this->getPurses() == 6);
     }
 
     public function getCurrentCategory()

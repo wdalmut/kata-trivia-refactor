@@ -1,5 +1,5 @@
 <?php
-class GameTest extends \PHPUnit_Framework_TestCase
+class GameRunnerTest extends \PHPUnit_Framework_TestCase
 {
     private $goldenLimit = 1000;
 

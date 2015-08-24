@@ -32,6 +32,7 @@ class Game
 
         $this->writer->write("%s was added", $player);
         $this->writer->write("They are player number %d", $this->players->count());
+
 		return true;
 	}
 
@@ -56,17 +57,16 @@ class Game
 
         $this->writer->write("%s's new location is %s", $player, $player->getPlace());
         $this->writer->write("The category is %s", $player->getCurrentCategory());
-
         $this->writer->write($this->questions->askFor($player));
 	}
 
     public function wasCorrectlyAnswered()
     {
         $player = $this->players->get();
+        $this->players->next();
 
         if ($player->isInPenaltyBox() && !$player->isGettingOutOfPenaltyBox()) {
-            $this->players->next();
-            return true;
+            return false;
         }
 
         $player->addPurses(1);
@@ -74,21 +74,19 @@ class Game
         $this->writer->write("Answer was correct!!!!");
         $this->writer->write("%s now has %d Gold Coins.", $player, $player->getPurses());
 
-        $this->players->next();
-
         return $player->didWin();
 	}
 
     public function wrongAnswer()
     {
         $player = $this->players->get();
+        $this->players->next();
 
 		$this->writer->write("Question was incorrectly answered");
 		$this->writer->write("%s was sent to the penalty box", $player);
 
         $player->setPenaltyBox(true);
 
-        $this->players->next();
-		return true;
+		return false;
 	}
 }
