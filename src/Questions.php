@@ -33,21 +33,23 @@ class Questions extends ArrayObject
 
     public function askFor(Player $player)
     {
+        $question = "";
         switch ($player->getCurrentCategory()) {
             case Questions::POP:
-                echoln($this->next(Questions::POP));
+                $question = $this->next(Questions::POP);
                 break;
             case Questions::SCIENCE:
-                echoln($this->next(Questions::SCIENCE));
+                $question = $this->next(Questions::SCIENCE);
                 break;
             case Questions::SPORTS:
-                echoln($this->next(Questions::SPORTS));
+                $question = $this->next(Questions::SPORTS);
                 break;
             case Questions::ROCK:
-                echoln($this->next(Questions::ROCK));
+                $question = $this->next(Questions::ROCK);
                 break;
         }
 
+        return $question;
     }
 
     public function next($type)

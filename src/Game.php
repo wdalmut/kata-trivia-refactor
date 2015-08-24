@@ -1,19 +1,16 @@
 <?php
 
-function echoln($string) {
-  echo $string."\n";
-}
-
 class Game
 {
     private $players;
     private $questions;
+    private $writer;
 
-    public function __construct()
+    public function __construct(Writer $writer)
     {
         $this->players = new Players();
-
         $this->questions = new Questions();
+        $this->writer = $writer;
 
         for ($i = 0; $i < 50; $i++) {
             $this->questions->addQuestion(Questions::POP, "Pop Question " . $i);
@@ -32,48 +29,36 @@ class Game
     {
         $player = new Player($playerName);
         $this->players->append($player);
-        $player->setPenaltyBox(false);
 
-        echoln($player . " was added");
-        echoln("They are player number " . $this->players->count());
+        $this->writer->write("%s was added", $player);
+        $this->writer->write("They are player number %d", $this->players->count());
 		return true;
 	}
 
 	public function  roll($roll) {
         $player = $this->players->get();
 
-		echoln($player . " is the current player");
-		echoln("They have rolled a " . $roll);
+		$this->writer->write("%s is the current player", $player);
+		$this->writer->write("They have rolled a %d", $roll);
 
 		if ($player->isInPenaltyBox()) {
-			if ($this->rollIsOdd($roll)) {
-                $player->setGettingOutPenaltyBox(true);
-
-				echoln($player . " is getting out of the penalty box");
-                $player->getPlace()->moveBy($roll);
-
-				echoln($player . "'s new location is " . $player->getPlace());
-				echoln("The category is " . $player->getCurrentCategory());
-
-                $this->questions->askFor($player);
-			} else {
-				echoln($player . " is not getting out of the penalty box");
+			if ($roll % 2 == 0) {
+				$this->writer->write("%s is not getting out of the penalty box", $player);
                 $player->setGettingOutPenaltyBox(false);
+                return;
             }
-		} else {
-            $player->getPlace()->moveBy($roll);
 
-			echoln($player . "'s new location is " .$player->getPlace());
-			echoln("The category is " . $player->getCurrentCategory());
+            $player->setGettingOutPenaltyBox(true);
+            $this->writer->write("%s is getting out of the penalty box", $player);
+        }
 
-            $this->questions->askFor($player);
-		}
+        $player->getPlace()->moveBy($roll);
+
+        $this->writer->write("%s's new location is %s", $player, $player->getPlace());
+        $this->writer->write("The category is %s", $player->getCurrentCategory());
+
+        $this->writer->write($this->questions->askFor($player));
 	}
-
-    private function rollIsOdd($roll)
-    {
-        return ($roll % 2 != 0);
-    }
 
     public function wasCorrectlyAnswered()
     {
@@ -84,21 +69,23 @@ class Game
             return true;
         }
 
-        echoln("Answer was correct!!!!");
         $player->addPurses(1);
-        echoln($player . " now has " . $player->getPurses() . " Gold Coins.");
 
-        $winner = $player->didWin();
+        $this->writer->write("Answer was correct!!!!");
+        $this->writer->write("%s now has %d Gold Coins.", $player, $player->getPurses());
+
         $this->players->next();
 
-        return $winner;
+        return $player->didWin();
 	}
 
     public function wrongAnswer()
     {
         $player = $this->players->get();
-		echoln("Question was incorrectly answered");
-		echoln($player . " was sent to the penalty box");
+
+		$this->writer->write("Question was incorrectly answered");
+		$this->writer->write("%s was sent to the penalty box", $player);
+
         $player->setPenaltyBox(true);
 
         $this->players->next();

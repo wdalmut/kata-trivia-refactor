@@ -1,7 +1,7 @@
 <?php
 class GameTest extends \PHPUnit_Framework_TestCase
 {
-    private $goldenLimit = 20000;
+    private $goldenLimit = 1000;
 
     /**
      * @dataProvider getSeeds
