@@ -17,13 +17,13 @@ class Game
             $this->questions->addQuestion(Questions::SCIENCE, "Science Question " . $i);
             $this->questions->addQuestion(Questions::SPORTS, "Sports Question " . $i);
             $this->questions->addQuestion(Questions::ROCK, "Rock Question " . $i);
-    	}
+        }
     }
 
     public function isPlayable()
     {
-		return ($this->players->count() >= 2);
-	}
+        return ($this->players->count() >= 2);
+    }
 
     public function add($playerName)
     {
@@ -33,18 +33,18 @@ class Game
         $this->writer->write("%s was added", $player);
         $this->writer->write("They are player number %d", $this->players->count());
 
-		return true;
-	}
+        return true;
+    }
 
-	public function  roll($roll) {
+    public function  roll($roll) {
         $player = $this->players->get();
 
-		$this->writer->write("%s is the current player", $player);
-		$this->writer->write("They have rolled a %d", $roll);
+        $this->writer->write("%s is the current player", $player);
+        $this->writer->write("They have rolled a %d", $roll);
 
-		if ($player->isInPenaltyBox()) {
-			if ($roll % 2 == 0) {
-				$this->writer->write("%s is not getting out of the penalty box", $player);
+        if ($player->isInPenaltyBox()) {
+            if ($roll % 2 == 0) {
+                $this->writer->write("%s is not getting out of the penalty box", $player);
                 $player->setGettingOutPenaltyBox(false);
                 return;
             }
@@ -58,7 +58,7 @@ class Game
         $this->writer->write("%s's new location is %s", $player, $player->getPlace());
         $this->writer->write("The category is %s", $player->getCurrentCategory());
         $this->writer->write($this->questions->askFor($player));
-	}
+    }
 
     public function wasCorrectlyAnswered()
     {
@@ -75,18 +75,18 @@ class Game
         $this->writer->write("%s now has %d Gold Coins.", $player, $player->getPurses());
 
         return $player->didWin();
-	}
+    }
 
     public function wrongAnswer()
     {
         $player = $this->players->get();
         $this->players->next();
 
-		$this->writer->write("Question was incorrectly answered");
-		$this->writer->write("%s was sent to the penalty box", $player);
+        $this->writer->write("Question was incorrectly answered");
+        $this->writer->write("%s was sent to the penalty box", $player);
 
         $player->setPenaltyBox(true);
 
-		return false;
-	}
+        return false;
+    }
 }
